@@ -11,7 +11,6 @@ Gradle plugin to ease publishing to Maven Central.
 ```kotlin
 plugins {
     `java-library`
-    signing
     id("io.github.sgtsilvio.gradle.maven-central-publishing") version "0.1.0"
 }
 

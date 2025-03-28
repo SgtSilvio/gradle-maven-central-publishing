@@ -9,6 +9,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugins.signing.SigningPlugin
 
 /**
  * @author Silvio Giebl
@@ -18,6 +19,7 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.pluginManager.apply(MavenPublishPlugin::class)
+        project.pluginManager.apply(SigningPlugin::class)
         val publishingExtension = project.extensions.getByType(PublishingExtension::class)
         val outputDirectory = project.layout.buildDirectory.dir("maven-central-publishing")
         val stagingRepositoryDirectory = outputDirectory.map { it.dir("staging-repository") }

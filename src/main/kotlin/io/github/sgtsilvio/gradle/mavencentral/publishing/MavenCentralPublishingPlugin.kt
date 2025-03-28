@@ -2,6 +2,7 @@ package io.github.sgtsilvio.gradle.mavencentral.publishing
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
@@ -37,9 +38,11 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
             destinationDirectory.set(outputDirectory)
             archiveFileName.set("bundle.zip")
         }
-        val uploadBundleTask = project.tasks.register("uploadMavenCentralBundle") { // TODO custom type
-            // bundleTask.archiveFile as input
-            // credentials (PasswordCredentials) property as internal
+        val uploadBundleTask = project.tasks.register<MavenCentralUploadTask>("uploadMavenCentralBundle") {
+            group = TASK_GROUP_NAME
+            description = "" // TODO
+            bundleFile.set(bundleTask.flatMap { it.archiveFile })
+            credentials.set(project.providers.credentials(PasswordCredentials::class, "mavenCentral"))
         }
         publishingExtension.publications.withType<MavenPublication> {
             val publicationName = name

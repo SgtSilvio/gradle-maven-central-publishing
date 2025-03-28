@@ -27,7 +27,7 @@ abstract class MavenCentralUploadTask : DefaultTask() {
     val baseUrl = project.objects.property<URI>().convention(URI("https://central.sonatype.com"))
 
     @get:Input
-    val isPublish = project.objects.property<Boolean>().convention(true)
+    val publish = project.objects.property<Boolean>().convention(true)
 
     @TaskAction
     protected fun run() {
@@ -39,7 +39,7 @@ abstract class MavenCentralUploadTask : DefaultTask() {
         val deploymentId = publisherApi.upload(bundleFile)
         logger.quiet("maven central deployment id: $deploymentId")
         publisherApi.waitForState(deploymentId, "VALIDATED")
-        if (isPublish.get()) {
+        if (publish.get()) { // TODO separate publish task?
             publisherApi.publish(deploymentId)
             publisherApi.waitForState(deploymentId, "PUBLISHED")
         }

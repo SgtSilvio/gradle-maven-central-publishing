@@ -34,9 +34,9 @@ singing {
 }
 ```
 
-Run `publishToMavenCentral` to publish all registered publications to Maven Central.
+Run the `publishToMavenCentral` task to publish all registered publications to Maven Central.
 
-Run `publish<PublicationName>PublicationToMavenCentral` to publish only a specific publication to Maven Central.
+Run the `publish<PublicationName>PublicationToMavenCentral` task to publish only a specific publication to Maven Central.
 
 ## Configuration
 
@@ -48,7 +48,9 @@ Set the project properties `mavenCentralUsername` and `mavenCentralPassword` to 
 
 #### Set Credentials via Command Line
 
-`./gradlew publishToMavenCentral -PmavenCentralUsername=<tokenUsername> -PmavenCentralPassword=<tokenPassword>`
+```shell
+./gradlew publishToMavenCentral -PmavenCentralUsername=<tokenUsername> -PmavenCentralPassword=<tokenPassword>
+```
 
 #### Set Credentials via `~/.gradle/gradle.properties`
 
@@ -59,9 +61,9 @@ mavenCentralPassword=<tokenPassword>
 
 #### Set Credentials via Environment Variables
 
-```
-ORG_GRADLE_PROJECT_mavenCentralUsername=<tokenUsername>
-ORG_GRADLE_PROJECT_mavenCentralPassword=<tokenPassword>
+```shell
+export ORG_GRADLE_PROJECT_mavenCentralUsername=<tokenUsername>
+export ORG_GRADLE_PROJECT_mavenCentralPassword=<tokenPassword>
 ```
 
 ## Integration with Other Plugins

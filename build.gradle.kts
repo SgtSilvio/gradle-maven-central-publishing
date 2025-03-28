@@ -35,6 +35,11 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation(libs.okhttp)
+    implementation(libs.json)
+}
+
 gradlePlugin {
     plugins {
         create("mavenCentralPublishing") {

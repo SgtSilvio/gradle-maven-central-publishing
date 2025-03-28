@@ -20,7 +20,7 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
         val publishingExtension = project.extensions.getByType(PublishingExtension::class)
         val outputDirectory = project.layout.buildDirectory.dir("maven-central-publishing")
         val stagingRepositoryDirectory = outputDirectory.map { it.dir("staging-repository") }
-        val stagingRepository = publishingExtension.repositories.maven {
+        publishingExtension.repositories.maven {
             name = STAGING_REPOSITORY_NAME
             url = project.uri(stagingRepositoryDirectory)
         }
@@ -41,15 +41,6 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
             // bundleTask.archiveFile as input
             // credentials (PasswordCredentials) property as internal
         }
-//        project.tasks.withType<PublishToMavenRepository>()
-//            .matching { it.repository == stagingRepository }
-//            .configureEach {
-//                val publishTask = this
-//                publishTask.dependsOn(cleanTask)
-//                bundleTask {
-//                    mustRunAfter(publishTask)
-//                }
-//            }
         publishingExtension.publications.withType<MavenPublication> {
             val publicationName = name
             val publishTask =

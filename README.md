@@ -46,25 +46,25 @@ You need to create a user token for the Maven Central portal: https://central.so
 
 Set the project properties `mavenCentralUsername` and `mavenCentralPassword` to your user token.
 
-#### Set Credentials via Command Line
+- Set credentials via command line
 
-```shell
-./gradlew publishToMavenCentral -PmavenCentralUsername=<tokenUsername> -PmavenCentralPassword=<tokenPassword>
-```
+  ```shell
+  ./gradlew publishToMavenCentral -PmavenCentralUsername=<tokenUsername> -PmavenCentralPassword=<tokenPassword>
+  ```
 
-#### Set Credentials via `~/.gradle/gradle.properties`
+- Set credentials via `~/.gradle/gradle.properties`
 
-```properties
-mavenCentralUsername=<tokenUsername>
-mavenCentralPassword=<tokenPassword>
-```
+  ```properties
+  mavenCentralUsername=<tokenUsername>
+  mavenCentralPassword=<tokenPassword>
+  ```
 
-#### Set Credentials via Environment Variables
+- Set credentials via environment variables
 
-```shell
-export ORG_GRADLE_PROJECT_mavenCentralUsername=<tokenUsername>
-export ORG_GRADLE_PROJECT_mavenCentralPassword=<tokenPassword>
-```
+  ```shell
+  export ORG_GRADLE_PROJECT_mavenCentralUsername=<tokenUsername>
+  export ORG_GRADLE_PROJECT_mavenCentralPassword=<tokenPassword>
+  ```
 
 ## Integration with Other Plugins
 

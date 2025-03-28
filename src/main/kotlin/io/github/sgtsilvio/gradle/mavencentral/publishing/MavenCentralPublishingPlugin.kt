@@ -54,7 +54,7 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
             bundleTask {
                 mustRunAfter(publishTask)
             }
-            project.tasks.register("publish${publicationName.capitalize()}ToMavenCentral") {
+            project.tasks.register("publish${publicationName.capitalize()}PublicationToMavenCentral") {
                 dependsOn(publishTask)
                 dependsOn(uploadBundleTask)
             }

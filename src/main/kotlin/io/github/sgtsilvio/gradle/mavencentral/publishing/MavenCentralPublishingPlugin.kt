@@ -44,7 +44,7 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
             description = "Uploads, validates and publishes the '${bundleTask.name}' to Maven Central."
             bundleFile.set(bundleTask.flatMap { it.archiveFile })
             credentials.set(project.providers.credentials(PasswordCredentials::class, "mavenCentral"))
-            deploymentName.set("testname") // TODO
+            deploymentName.set(project.provider { "${project.group}:${project.name}:${project.version}" })
             deploymentIdFile.set(outputDirectory.map { it.file("deployment-id.txt") })
         }
         publishingExtension.publications.withType<MavenPublication> {

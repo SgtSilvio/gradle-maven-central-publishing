@@ -8,6 +8,8 @@ Gradle plugin to ease publishing to Maven Central.
 
 ## How to Use
 
+The following is an example configuration for a Java library.
+
 ```kotlin
 plugins {
     `java-library`
@@ -15,8 +17,6 @@ plugins {
 }
 
 publishing {
-    // Use the official maven-publish plugin configuration
-    // The following is a default configuration for a java library
     publications {
         register<MavenPublication>("maven") {
             from(components["java"])
@@ -24,9 +24,7 @@ publishing {
     }
 }
 
-singing {
-    // Use the official signing plugin configuration
-    // The following requires to set the project properties signingKey and signingPassword to the PGP key and passphrase
+signing {
     val signingKey: String? by project
     val signingPassword: String? by project
     useInMemoryPgpKeys(signingKey, signingPassword)
@@ -40,7 +38,7 @@ Run the `publish<PublicationName>PublicationToMavenCentral` task to publish only
 
 ## Configuration
 
-### Credentials
+### Maven Central Portal Credentials
 
 You need to create a user token for the Maven Central portal: https://central.sonatype.com/account.
 
@@ -65,6 +63,12 @@ Set the project properties `mavenCentralUsername` and `mavenCentralPassword` to 
   export ORG_GRADLE_PROJECT_mavenCentralUsername=<tokenUsername>
   export ORG_GRADLE_PROJECT_mavenCentralPassword=<tokenPassword>
   ```
+
+### PGP Credentials
+
+Because Maven Central requires signatures, you also need to configure PGP credentials.
+The specific configuration depends on your `signing` plugin configuration.
+The example above requires to set the project properties `signingKey` and `signingPassword` to the PGP key and passphrase.
 
 ## Integration with Other Plugins
 

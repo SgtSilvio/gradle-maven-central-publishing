@@ -29,19 +29,19 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
         }
         val cleanTask = project.tasks.register<Delete>("clean${STAGING_REPOSITORY_NAME.capitalize()}Repository") {
             group = TASK_GROUP_NAME
-            description = "" // TODO
+            description = "Cleans the local '$STAGING_REPOSITORY_NAME' repository directory."
             delete(stagingRepositoryDirectory)
         }
         val bundleTask = project.tasks.register<Zip>("mavenCentralBundle") {
             group = TASK_GROUP_NAME
-            description = "" // TODO
+            description = "Bundles the local '$STAGING_REPOSITORY_NAME' repository content."
             from(stagingRepositoryDirectory)
             destinationDirectory.set(outputDirectory)
             archiveFileName.set("bundle.zip")
         }
         val uploadBundleTask = project.tasks.register<MavenCentralUploadTask>("uploadMavenCentralBundle") {
             group = TASK_GROUP_NAME
-            description = "" // TODO
+            description = "Uploads, validates and publishes the '${bundleTask.name}' to Maven Central."
             bundleFile.set(bundleTask.flatMap { it.archiveFile })
             credentials.set(project.providers.credentials(PasswordCredentials::class, "mavenCentral"))
         }
@@ -56,11 +56,15 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
                 mustRunAfter(publishTask)
             }
             project.tasks.register("publish${publicationName.capitalize()}PublicationToMavenCentral") {
+                group = TASK_GROUP_NAME
+                description = "Publishes Maven publication '$publicationName' to Maven Central."
                 dependsOn(publishTask)
                 dependsOn(uploadBundleTask)
             }
         }
         project.tasks.register("publishToMavenCentral") {
+            group = TASK_GROUP_NAME
+            description = "Publishes all Maven publications produced by this project to Maven Central."
             dependsOn(project.tasks.named("publishAllPublicationsTo${STAGING_REPOSITORY_NAME.capitalize()}Repository"))
             dependsOn(uploadBundleTask)
         }

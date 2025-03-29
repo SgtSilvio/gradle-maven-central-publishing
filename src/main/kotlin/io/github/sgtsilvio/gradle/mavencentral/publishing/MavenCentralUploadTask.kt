@@ -5,6 +5,7 @@ import org.gradle.api.credentials.PasswordCredentials
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import org.gradle.work.DisableCachingByDefault
@@ -29,15 +30,20 @@ abstract class MavenCentralUploadTask : DefaultTask() {
     @get:Input
     val publish = project.objects.property<Boolean>().convention(true)
 
+    @get:OutputFile
+    val deploymentIdFile = project.objects.fileProperty()
+
     @TaskAction
     protected fun run() {
         val bundleFile = bundleFile.get().asFile
         val credentials = credentials.get()
         val baseUrl = baseUrl.get()
+        val deploymentIdFile = deploymentIdFile.get().asFile
 
         val publisherApi = MavenCentralPublisherApi(baseUrl, credentials.username!!, credentials.password!!)
         val deploymentId = publisherApi.upload(bundleFile)
         logger.quiet("maven central deployment id: $deploymentId")
+        deploymentIdFile.writeText(deploymentId)
         publisherApi.waitForState(deploymentId, "VALIDATED")
         if (publish.get()) { // TODO separate publish task?
             publisherApi.publish(deploymentId)

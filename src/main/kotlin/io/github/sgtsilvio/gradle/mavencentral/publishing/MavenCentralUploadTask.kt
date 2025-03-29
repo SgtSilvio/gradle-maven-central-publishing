@@ -46,21 +46,27 @@ abstract class MavenCentralUploadTask : DefaultTask() {
     }
 
     private fun MavenCentralPublisherApi.waitForState(deploymentId: String, expectedState: String) {
+        var previousState: String? = null
         while (true) {
             val status = getStatus(deploymentId)
             val state = status.getString("deploymentState")
-            when (state) {
-                expectedState -> {
-                    logger.lifecycle("maven central deployment id: $deploymentId, state: $state")
-                    return
-                }
-                "FAILED" -> {
-                    val message = "maven central deployment id: $deploymentId, state: $state (expected $expectedState)"
-                    logger.lifecycle(message)
-                    error(message + '\n' + status.getJSONObject("errors").toString(2))
-                }
+            val message = "maven central deployment id: $deploymentId, state: $state"
+            if (state == expectedState) {
+                logger.lifecycle(message)
+                return
             }
-            logger.lifecycle("maven central deployment id: $deploymentId, state: $state (waiting for $expectedState)")
+            if (state == "FAILED") {
+                val failedMessage = "$message (expected $expectedState)"
+                logger.lifecycle(failedMessage)
+                error(failedMessage + '\n' + status.getJSONObject("errors").toString(2))
+            }
+            val waitingMessage = "$message (waiting for $expectedState)"
+            if (state != previousState) {
+                logger.lifecycle(waitingMessage)
+            } else {
+                logger.info(waitingMessage)
+            }
+            previousState = state
             TimeUnit.SECONDS.sleep(1)
         }
     }

@@ -50,8 +50,18 @@ abstract class MavenCentralUploadTask : DefaultTask() {
 
     private fun MavenCentralPublisherApi.waitForState(deploymentId: String, expectedState: String) {
         var previousState: String? = null
+        var errors = 0
         while (true) {
-            val status = getStatus(deploymentId)
+            val status = try {
+                getStatus(deploymentId)
+            } catch (e: IllegalStateException) {
+                if (++errors > 3) {
+                    throw e
+                }
+                logger.lifecycle("maven central deployment id: $deploymentId, state request failed for $errors times, treating as temporary error: ${e.message}")
+                continue
+            }
+            errors = 0
             val state = status.getString("deploymentState")
             val message = "maven central deployment id: $deploymentId, state: $state"
             if (state == expectedState) {

@@ -19,12 +19,16 @@ internal class MavenCentralPublisherApi(private val baseUrl: URI, tokenUsername:
     private val httpClient = OkHttpClient()
     private val token = Base64.getEncoder().encodeToString("$tokenUsername:$tokenPassword".toByteArray())
 
-    fun upload(bundleFile: File, deploymentName: String): String {
+    fun upload(bundleFile: File, deploymentName: String, publish: Boolean): String {
+        var query = "?name=$deploymentName"
+        if (publish) {
+            query += "&publishingType=AUTOMATIC"
+        }
         val uploadRequest = Request.Builder()
-            .url(baseUrl.resolve("api/v1/publisher/upload?name=$deploymentName").toString())
+            .url(baseUrl.resolve("api/v1/publisher/upload$query").toString())
             .post(
                 MultipartBody.Builder().addFormDataPart(
-                    "bundle", "bundle.zip", bundleFile.asRequestBody("application/zip".toMediaType())
+                    "bundle", bundleFile.name, bundleFile.asRequestBody("application/zip".toMediaType())
                 ).build()
             )
             .header("authorization", "Bearer $token")
@@ -47,16 +51,5 @@ internal class MavenCentralPublisherApi(private val baseUrl: URI, tokenUsername:
             JSONObject(response.body!!.string())
         }
         return status
-    }
-
-    fun publish(deploymentId: String) {
-        val publishRequest = Request.Builder()
-            .url(baseUrl.resolve("api/v1/publisher/deployment/$deploymentId").toString())
-            .post("".toRequestBody())
-            .header("authorization", "Bearer $token")
-            .build()
-        httpClient.newCall(publishRequest).execute().use { response ->
-            check(response.code == 204) { "unexpected response code ${response.code} for ${response.request.url}" }
-        }
     }
 }

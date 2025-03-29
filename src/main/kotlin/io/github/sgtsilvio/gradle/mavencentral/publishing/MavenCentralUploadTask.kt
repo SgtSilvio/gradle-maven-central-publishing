@@ -2,11 +2,7 @@ package io.github.sgtsilvio.gradle.mavencentral.publishing
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.credentials.PasswordCredentials
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.property
 import org.gradle.work.DisableCachingByDefault
 import java.net.URI
@@ -46,14 +42,10 @@ abstract class MavenCentralUploadTask : DefaultTask() {
         val deploymentIdFile = deploymentIdFile.get().asFile
 
         val publisherApi = MavenCentralPublisherApi(baseUrl, credentials.username!!, credentials.password!!)
-        val deploymentId = publisherApi.upload(bundleFile, deploymentName)
+        val deploymentId = publisherApi.upload(bundleFile, deploymentName, isPublish)
         logger.quiet("maven central deployment id: $deploymentId")
         deploymentIdFile.writeText(deploymentId)
-        publisherApi.waitForState(deploymentId, "VALIDATED")
-        if (isPublish) { // TODO separate publish task?
-            publisherApi.publish(deploymentId)
-            publisherApi.waitForState(deploymentId, "PUBLISHED")
-        }
+        publisherApi.waitForState(deploymentId, if (isPublish) "PUBLISHED" else "VALIDATED")
     }
 
     private fun MavenCentralPublisherApi.waitForState(deploymentId: String, expectedState: String) {

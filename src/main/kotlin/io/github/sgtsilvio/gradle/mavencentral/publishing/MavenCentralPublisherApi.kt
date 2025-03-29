@@ -19,9 +19,9 @@ internal class MavenCentralPublisherApi(private val baseUrl: URI, tokenUsername:
     private val httpClient = OkHttpClient()
     private val token = Base64.getEncoder().encodeToString("$tokenUsername:$tokenPassword".toByteArray())
 
-    fun upload(bundleFile: File): String {
+    fun upload(bundleFile: File, deploymentName: String): String {
         val uploadRequest = Request.Builder()
-            .url(baseUrl.resolve("api/v1/publisher/upload").toString())
+            .url(baseUrl.resolve("api/v1/publisher/upload?name=$deploymentName").toString())
             .post(
                 MultipartBody.Builder().addFormDataPart(
                     "bundle", "bundle.zip", bundleFile.asRequestBody("application/zip".toMediaType())

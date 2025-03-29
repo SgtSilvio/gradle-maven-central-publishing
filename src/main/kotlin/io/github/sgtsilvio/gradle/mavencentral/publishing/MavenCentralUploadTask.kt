@@ -30,6 +30,9 @@ abstract class MavenCentralUploadTask : DefaultTask() {
     @get:Input
     val publish = project.objects.property<Boolean>().convention(true)
 
+    @get:Input
+    val deploymentName = project.objects.property<String>()
+
     @get:OutputFile
     val deploymentIdFile = project.objects.fileProperty()
 
@@ -39,10 +42,11 @@ abstract class MavenCentralUploadTask : DefaultTask() {
         val credentials = credentials.get()
         val baseUrl = baseUrl.get()
         val isPublish = publish.get()
+        val deploymentName = deploymentName.get()
         val deploymentIdFile = deploymentIdFile.get().asFile
 
         val publisherApi = MavenCentralPublisherApi(baseUrl, credentials.username!!, credentials.password!!)
-        val deploymentId = publisherApi.upload(bundleFile)
+        val deploymentId = publisherApi.upload(bundleFile, deploymentName)
         logger.quiet("maven central deployment id: $deploymentId")
         deploymentIdFile.writeText(deploymentId)
         publisherApi.waitForState(deploymentId, "VALIDATED")

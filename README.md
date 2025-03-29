@@ -72,5 +72,5 @@ For instance, the example above requires to set the project properties `signingK
 
 ## Integration with Other Plugins
 
-- This plugin does not implement functionality already provided by core Gradle plugins like `maven-publish` and `signing`.
-- Because this plugin integrates with core Gradle plugins, it enables you to use any other plugin that integrates with these plugins, for example [gradle-metadata](https://github.com/SgtSilvio/gradle-metadata) to easily configure pom metadata.
+This plugin does not implement functionality already provided by core Gradle plugins like `maven-publish` and `signing`.
+Because this plugin integrates with core Gradle plugins, it enables you to use any other plugin that integrates with these plugins, for example [gradle-metadata](https://github.com/SgtSilvio/gradle-metadata) to easily configure pom metadata.

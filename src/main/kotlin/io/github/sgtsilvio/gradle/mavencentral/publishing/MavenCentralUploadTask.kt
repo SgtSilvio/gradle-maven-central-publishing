@@ -38,6 +38,7 @@ abstract class MavenCentralUploadTask : DefaultTask() {
         val bundleFile = bundleFile.get().asFile
         val credentials = credentials.get()
         val baseUrl = baseUrl.get()
+        val isPublish = publish.get()
         val deploymentIdFile = deploymentIdFile.get().asFile
 
         val publisherApi = MavenCentralPublisherApi(baseUrl, credentials.username!!, credentials.password!!)
@@ -45,7 +46,7 @@ abstract class MavenCentralUploadTask : DefaultTask() {
         logger.quiet("maven central deployment id: $deploymentId")
         deploymentIdFile.writeText(deploymentId)
         publisherApi.waitForState(deploymentId, "VALIDATED")
-        if (publish.get()) { // TODO separate publish task?
+        if (isPublish) { // TODO separate publish task?
             publisherApi.publish(deploymentId)
             publisherApi.waitForState(deploymentId, "PUBLISHED")
         }

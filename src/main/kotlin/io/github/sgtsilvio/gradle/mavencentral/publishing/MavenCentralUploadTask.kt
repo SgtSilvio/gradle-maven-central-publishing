@@ -21,7 +21,7 @@ abstract class MavenCentralUploadTask : DefaultTask() {
     val credentials = project.objects.property<PasswordCredentials>()
 
     @get:Input
-    val baseUrl = project.objects.property<URI>().convention(URI("https://central.sonatype.com"))
+    val baseUrl = project.objects.property<URI>().convention(URI("https://central.sonatype.com/"))
 
     @get:Input
     val publish = project.objects.property<Boolean>().convention(true)

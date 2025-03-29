@@ -36,17 +36,17 @@ internal class MavenCentralPublisherApi(private val baseUrl: URI, tokenUsername:
         return deploymentId
     }
 
-    fun getState(deploymentId: String): String {
+    fun getStatus(deploymentId: String): JSONObject {
         val statusRequest = Request.Builder()
             .url(baseUrl.resolve("api/v1/publisher/status?id=$deploymentId").toString())
             .post("".toRequestBody())
             .header("authorization", "Bearer $token")
             .build()
-        val state = httpClient.newCall(statusRequest).execute().use { response ->
+        val status = httpClient.newCall(statusRequest).execute().use { response ->
             check(response.code == 200) { "unexpected response code ${response.code} for ${response.request.url}" }
-            JSONObject(response.body!!.string()).getString("deploymentState")
+            JSONObject(response.body!!.string())
         }
-        return state
+        return status
     }
 
     fun publish(deploymentId: String) {

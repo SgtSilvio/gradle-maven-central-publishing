@@ -36,7 +36,6 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
             group = TASK_GROUP_NAME
             description = "" // TODO
             from(stagingRepositoryDirectory)
-            exclude("maven-metadata*.xml*") // TODO
             destinationDirectory.set(outputDirectory)
             archiveFileName.set("bundle.zip")
         }

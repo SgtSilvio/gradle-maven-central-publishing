@@ -14,6 +14,30 @@ The following is an example configuration for a Java library.
 plugins {
     `java-library`
     id("io.github.sgtsilvio.gradle.maven-central-publishing") version "0.1.0"
+    id("io.github.sgtsilvio.gradle.metadata") version "0.6.0"
+}
+
+group = "org.example"
+version = "0.1.0"
+
+metadata {
+    readableName = "Example library"
+    description = "Example library description"
+    license {
+        apache2()
+    }
+    developers {
+        register("jdoe") {
+            fullName = "John Doe"
+            email = "john.doe@example.org"
+        }
+    }
+    github {}
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {

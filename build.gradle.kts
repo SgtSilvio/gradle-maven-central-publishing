@@ -45,7 +45,7 @@ gradlePlugin {
         create("mavenCentralPublishing") {
             id = "$group.maven-central-publishing"
             implementationClass = "$group.mavencentral.publishing.MavenCentralPublishingPlugin"
-            tags = listOf("maven-central", "publishing")
+            tags = listOf("maven-central", "maven-central-portal", "publishing")
         }
     }
 }

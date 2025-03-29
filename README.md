@@ -68,7 +68,7 @@ Set the project properties `mavenCentralUsername` and `mavenCentralPassword` to 
 
 Because Maven Central requires signatures, you also need to configure PGP credentials.
 The specific configuration depends on your `signing` plugin configuration.
-The example above requires to set the project properties `signingKey` and `signingPassword` to the PGP key and passphrase.
+For instance, the example above requires to set the project properties `signingKey` and `signingPassword` to the PGP key and passphrase.
 
 ## Integration with Other Plugins
 

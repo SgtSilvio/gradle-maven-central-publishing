@@ -6,7 +6,7 @@ import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.property
 import org.gradle.work.DisableCachingByDefault
 import java.net.URI
-import java.util.concurrent.TimeUnit
+import java.time.Duration
 
 /**
  * @author Silvio Giebl
@@ -29,6 +29,9 @@ abstract class MavenCentralUploadTask : DefaultTask() {
     @get:Input
     val waitUntilFullyPublished = project.objects.property<Boolean>().convention(false)
 
+    @get:Internal
+    val statusRequestInterval = project.objects.property<Duration>().convention(Duration.ofSeconds(1))
+
     @get:Input
     val deploymentName = project.objects.property<String>()
 
@@ -42,6 +45,7 @@ abstract class MavenCentralUploadTask : DefaultTask() {
         val baseUrl = baseUrl.get()
         val isPublish = publish.get()
         val waitUntilFullyPublished = waitUntilFullyPublished.get()
+        val statusRequestInterval = statusRequestInterval.get()
         val deploymentName = deploymentName.get()
         val deploymentIdFile = deploymentIdFile.get().asFile
 
@@ -70,7 +74,7 @@ abstract class MavenCentralUploadTask : DefaultTask() {
                     throw e
                 }
                 logger.lifecycle("$message, state request failed for $errorCount times, treating as temporary error: ${e.message}")
-                TimeUnit.SECONDS.sleep(1)
+                Thread.sleep(statusRequestInterval.toMillis())
                 continue
             }
             errorCount = 0
@@ -94,7 +98,7 @@ abstract class MavenCentralUploadTask : DefaultTask() {
                 logger.info(waitingMessage)
             }
             previousState = state
-            TimeUnit.SECONDS.sleep(1)
+            Thread.sleep(statusRequestInterval.toMillis())
         }
     }
 }

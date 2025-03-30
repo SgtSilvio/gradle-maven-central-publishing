@@ -17,6 +17,9 @@ abstract class MavenCentralUploadTask : DefaultTask() {
     @get:InputFile
     val bundleFile = project.objects.fileProperty()
 
+    @get:Input
+    val deploymentName = project.objects.property<String>()
+
     @get:Internal
     val credentials = project.objects.property<PasswordCredentials>()
 
@@ -32,21 +35,18 @@ abstract class MavenCentralUploadTask : DefaultTask() {
     @get:Internal
     val statusRequestInterval = project.objects.property<Duration>().convention(Duration.ofSeconds(1))
 
-    @get:Input
-    val deploymentName = project.objects.property<String>()
-
     @get:OutputFile
     val deploymentIdFile = project.objects.fileProperty()
 
     @TaskAction
     protected fun run() {
         val bundleFile = bundleFile.get().asFile
+        val deploymentName = deploymentName.get()
         val credentials = credentials.get()
         val baseUrl = baseUrl.get()
         val isPublish = publish.get()
         val waitUntilFullyPublished = waitUntilFullyPublished.get()
         val statusRequestInterval = statusRequestInterval.get()
-        val deploymentName = deploymentName.get()
         val deploymentIdFile = deploymentIdFile.get().asFile
 
         val publisherApi = MavenCentralPublisherApi(baseUrl, credentials.username!!, credentials.password!!)

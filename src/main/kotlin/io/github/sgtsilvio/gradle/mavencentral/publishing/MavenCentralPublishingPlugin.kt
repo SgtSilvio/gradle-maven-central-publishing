@@ -60,6 +60,7 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
         group = TASK_GROUP_NAME
         description = "Bundles the local '$STAGING_REPOSITORY_NAME' repository content."
         from(stagingRepositoryDirectory)
+        exclude("**/maven-metadata.xml*")
         destinationDirectory.set(outputDirectory)
         archiveFileName.set("bundle.zip")
     }

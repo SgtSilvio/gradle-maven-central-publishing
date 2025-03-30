@@ -27,6 +27,9 @@ abstract class MavenCentralUploadTask : DefaultTask() {
     val publish = project.objects.property<Boolean>().convention(true)
 
     @get:Input
+    val waitUntilFullyPublished = project.objects.property<Boolean>().convention(false)
+
+    @get:Input
     val deploymentName = project.objects.property<String>()
 
     @get:OutputFile
@@ -38,6 +41,7 @@ abstract class MavenCentralUploadTask : DefaultTask() {
         val credentials = credentials.get()
         val baseUrl = baseUrl.get()
         val isPublish = publish.get()
+        val waitUntilFullyPublished = waitUntilFullyPublished.get()
         val deploymentName = deploymentName.get()
         val deploymentIdFile = deploymentIdFile.get().asFile
 
@@ -45,35 +49,52 @@ abstract class MavenCentralUploadTask : DefaultTask() {
         val deploymentId = publisherApi.upload(bundleFile, deploymentName, isPublish)
         logger.quiet("maven central deployment id: $deploymentId")
         deploymentIdFile.writeText(deploymentId)
-        publisherApi.waitForState(deploymentId, if (isPublish) "PUBLISHED" else "VALIDATED")
+        publisherApi.waitForState(
+            deploymentId,
+            when {
+                !isPublish -> setOf("VALIDATED")
+                !waitUntilFullyPublished -> setOf("PUBLISHING", "PUBLISHED")
+                else -> setOf("PUBLISHED")
+            },
+            when {
+                !isPublish -> setOf("PUBLISHING", "PUBLISHED", "FAILED")
+                else -> setOf("FAILED")
+            },
+        )
     }
 
-    private fun MavenCentralPublisherApi.waitForState(deploymentId: String, expectedState: String) {
+    private fun MavenCentralPublisherApi.waitForState(
+        deploymentId: String,
+        expectedStates: Set<String>,
+        unexpectedStates: Set<String>,
+    ) {
         var previousState: String? = null
-        var errors = 0
+        var errorCount = 0
         while (true) {
             val status = try {
                 getStatus(deploymentId)
             } catch (e: IllegalStateException) {
-                if (++errors > 3) {
+                if (++errorCount > 3) {
                     throw e
                 }
-                logger.lifecycle("maven central deployment id: $deploymentId, state request failed for $errors times, treating as temporary error: ${e.message}")
-                continue
+                logger.lifecycle("maven central deployment id: $deploymentId, state request failed for $errorCount times, treating as temporary error: ${e.message}")
+                continue // TODO delay
             }
-            errors = 0
+            errorCount = 0
             val state = status.getString("deploymentState")
             val message = "maven central deployment id: $deploymentId, state: $state"
-            if (state == expectedState) {
+            if (state in expectedStates) {
                 logger.lifecycle(message)
-                return
+                break
             }
-            if (state == "FAILED") {
-                val failedMessage = "$message (expected $expectedState)"
+            if (state in unexpectedStates) {
+                val failedMessage = "$message (expected ${expectedStates.joinToString(" or ")})"
                 logger.lifecycle(failedMessage)
-                error(failedMessage + '\n' + status.getJSONObject("errors").toString(2))
+                val errors = status.optJSONObject("errors")?.toString(2)
+                val errorMessage = if (errors == null) failedMessage else "$failedMessage, errors:\n$errors"
+                error(errorMessage)
             }
-            val waitingMessage = "$message (waiting for $expectedState)"
+            val waitingMessage = "$message (waiting for ${expectedStates.joinToString(" or ")})"
             if (state != previousState) {
                 logger.lifecycle(waitingMessage)
             } else {

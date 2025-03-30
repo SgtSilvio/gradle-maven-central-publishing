@@ -13,7 +13,7 @@ The following is an example configuration for a Java library.
 ```kotlin
 plugins {
     `java-library`
-    id("io.github.sgtsilvio.gradle.maven-central-publishing") version "0.2.0"
+    id("io.github.sgtsilvio.gradle.maven-central-publishing") version "0.3.0"
     id("io.github.sgtsilvio.gradle.metadata") version "0.6.0"
 }
 

@@ -7,8 +7,8 @@
 Gradle plugin to ease publishing to Maven Central.
 
 > [!NOTE]
-> This plugin uses the Maven Central Portal Publishing API and can not be used for publishing via the legacy OSSRH mechanism.
-> If you still publish via OSSRH please migrate your namespace to the Maven Central Portal: https://central.sonatype.com/publishing/namespaces)
+> This plugin uses the Maven Central Portal Publisher API and can not be used for publishing via the legacy OSSRH mechanism.
+> If you still publish via OSSRH please migrate your namespace to the Maven Central Portal: https://central.sonatype.com/publishing/namespaces (or use a different plugin such as https://github.com/gradle-nexus/publish-plugin).
 
 ## How to Use
 

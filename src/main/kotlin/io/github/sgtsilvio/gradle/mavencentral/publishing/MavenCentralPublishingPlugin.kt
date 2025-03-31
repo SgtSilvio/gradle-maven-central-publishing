@@ -8,6 +8,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.publish.plugins.PublishingPlugin
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
@@ -47,7 +48,7 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
         project: Project,
         stagingRepositoryDirectory: Provider<Directory>,
     ) = project.tasks.register<Delete>("clean${STAGING_REPOSITORY_NAME.capitalize()}Repository") {
-        group = TASK_GROUP_NAME
+        group = PublishingPlugin.PUBLISH_TASK_GROUP
         description = "Cleans the local '$STAGING_REPOSITORY_NAME' repository directory."
         delete(stagingRepositoryDirectory)
     }
@@ -57,7 +58,7 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
         stagingRepositoryDirectory: Provider<Directory>,
         outputDirectory: Provider<Directory>,
     ) = project.tasks.register<Zip>("mavenCentralBundle") {
-        group = TASK_GROUP_NAME
+        group = PublishingPlugin.PUBLISH_TASK_GROUP
         description = "Bundles the local '$STAGING_REPOSITORY_NAME' repository content."
         from(stagingRepositoryDirectory)
         exclude("**/maven-metadata.xml*")
@@ -70,7 +71,7 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
         bundleTask: TaskProvider<Zip>,
         outputDirectory: Provider<Directory>,
     ) = project.tasks.register<MavenCentralUploadTask>("uploadMavenCentralBundle") {
-        group = TASK_GROUP_NAME
+        group = PublishingPlugin.PUBLISH_TASK_GROUP
         description = "Uploads, validates and publishes the '${bundleTask.name}' to Maven Central."
         bundleFile.set(bundleTask.flatMap { it.archiveFile })
         deploymentName.set(project.provider { "${project.group}:${project.name}:${project.version}" })
@@ -87,7 +88,7 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
         publishToStagingRepositoryTask: TaskProvider<*>,
         uploadBundleTask: TaskProvider<MavenCentralUploadTask>,
     ) = project.tasks.register("publish${publicationName.capitalize()}PublicationToMavenCentral") {
-        group = TASK_GROUP_NAME
+        group = PublishingPlugin.PUBLISH_TASK_GROUP
         description = "Publishes Maven publication '$publicationName' to Maven Central."
         dependsOn(publishToStagingRepositoryTask)
         dependsOn(uploadBundleTask)
@@ -97,14 +98,13 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
         project: Project,
         uploadBundleTask: TaskProvider<MavenCentralUploadTask>,
     ) = project.tasks.register("publishToMavenCentral") {
-        group = TASK_GROUP_NAME
+        group = PublishingPlugin.PUBLISH_TASK_GROUP
         description = "Publishes all Maven publications produced by this project to Maven Central."
         dependsOn(project.tasks.named("publishAllPublicationsTo${STAGING_REPOSITORY_NAME.capitalize()}Repository"))
         dependsOn(uploadBundleTask)
     }
 }
 
-private const val TASK_GROUP_NAME = "publishing"
 private const val STAGING_REPOSITORY_NAME = "mavenCentralStaging"
 
 private fun String.capitalize() = replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }

@@ -41,7 +41,8 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
             bundleTask { mustRunAfter(publishToStagingRepositoryTask) }
             registerPublishTask(project, publicationName, publishToStagingRepositoryTask, uploadBundleTask)
         }
-        registerPublishAllTask(project, uploadBundleTask)
+        val publishAllTask = registerPublishAllTask(project, uploadBundleTask)
+        project.tasks.named(PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME) { dependsOn(publishAllTask) }
     }
 
     private fun registerCleanStagingRepositoryTask(

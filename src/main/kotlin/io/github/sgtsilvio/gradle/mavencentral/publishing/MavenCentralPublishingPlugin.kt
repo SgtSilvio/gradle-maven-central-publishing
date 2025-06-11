@@ -108,4 +108,5 @@ class MavenCentralPublishingPlugin : Plugin<Project> {
 
 private const val STAGING_REPOSITORY_NAME = "mavenCentralStaging"
 
-private fun String.capitalize() = replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+private fun String.capitalize() =
+    replaceFirstChar { if (it.isLowerCase()) it.titlecaseChar().toString() else it.toString() }

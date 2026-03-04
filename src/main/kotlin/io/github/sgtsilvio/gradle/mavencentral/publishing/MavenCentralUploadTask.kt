@@ -15,6 +15,7 @@ import java.time.Duration
 abstract class MavenCentralUploadTask : DefaultTask() {
 
     @get:InputFile
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
     val bundleFile = project.objects.fileProperty()
 
     @get:Input

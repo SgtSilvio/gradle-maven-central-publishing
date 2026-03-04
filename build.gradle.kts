@@ -1,3 +1,4 @@
+import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
@@ -53,6 +54,11 @@ gradlePlugin {
             id = "$group.maven-central-publishing"
             implementationClass = "$group.mavencentral.publishing.MavenCentralPublishingPlugin"
             tags = listOf("maven-central", "maven-central-portal", "publishing")
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

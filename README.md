@@ -18,7 +18,7 @@ The following is an example configuration for a Java library.
 plugins {
     `java-library`
     id("io.github.sgtsilvio.gradle.maven-central-publishing") version "0.4.1"
-    id("io.github.sgtsilvio.gradle.metadata") version "0.6.0"
+    id("io.github.sgtsilvio.gradle.metadata") version "0.7.0"
 }
 
 group = "org.example"

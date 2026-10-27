@@ -1,6 +1,6 @@
 [versions]
 okhttp = "4.12.1"
-json = "20251224"
+json = "20260814"
 
 [libraries]
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp"}

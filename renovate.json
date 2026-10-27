@@ -2,5 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "description": "org.json:json has versions in the format YYYYMMDD",
+      "matchPackageNames": ["org.json:json"],
+      "maxMajorIncrement": 0
+    }
   ]
 }
